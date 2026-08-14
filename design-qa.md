@@ -1,4 +1,4 @@
-# Design QA — Unique Care Revamp
+# Design QA — Unique WellCare Revamp
 
 - Source visual truth: `C:\Users\User\.codex\generated_images\019fcb9e-3636-7572-abfc-11b068bb621e\exec-0aca2d67-a452-4b7e-999d-1b22b3d99a4e.png`
 - Implementation screenshot: `C:\Users\User\Documents\Amaan Work\uniquescare\qa-revamp-home.png`
@@ -12,7 +12,7 @@
 
 ## Full-view comparison evidence
 
-The selected clinical-editorial direction and implementation share the same defining hierarchy: dark schedule strip, white navigation, serif-led split hero, navy/emerald/cobalt palette, scanner-dominant imagery, clear appointment CTA and editorial service sections. The implementation deliberately uses the supplied source logo and original Unique Care imagery rather than generated substitutes.
+The selected clinical-editorial direction and implementation share the same defining hierarchy: dark schedule strip, white navigation, serif-led split hero, navy/emerald/cobalt palette, scanner-dominant imagery, clear appointment CTA and editorial service sections. The implementation deliberately uses the supplied source logo and original Unique WellCare imagery rather than generated substitutes.
 
 ## Focused region evidence
 
@@ -23,7 +23,7 @@ The MRI/CT services region was checked independently because the full source moc
 - Fonts and typography: Source Serif 4 and DM Sans closely reproduce the editorial display/body contrast. Weight, leading, wrapping and hierarchy are consistent across home and inner pages.
 - Spacing and layout rhythm: the split hero, service schedule, editorial grids and section spacing follow the selected design. Inner pages reuse the same grid, spacing and CTA patterns.
 - Colors and tokens: deep navy, emerald, cobalt, off-white and muted mint are mapped to reusable CSS tokens and maintain readable contrast.
-- Image quality and asset fidelity: all visible imagery uses the original Unique Care/source-site assets. No broken images were found on any of the 13 routes. The user-supplied mark was enhanced and optimized as a 256 px favicon.
+- Image quality and asset fidelity: all visible imagery uses the original Unique WellCare/source-site assets. No broken images were found on any of the 13 routes. The user-supplied mark was enhanced and optimized as a 256 px favicon.
 - Copy and content: genuine MRI, CT, location, contact and review content is retained. Obvious WordPress placeholder text was replaced with relevant patient-facing information.
 
 ## Comparison history
