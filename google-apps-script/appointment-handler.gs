@@ -198,12 +198,9 @@ function sendAppointmentEmail(timestamp, data, prescription) {
     '</div>'
   ].join('');
 
-  MailApp.sendEmail({
-    to: CLIENT_EMAIL,
-    subject: subject,
+  GmailApp.sendEmail(CLIENT_EMAIL, subject, lines.join('\n'), {
     name: 'Unique WellCare System',
     replyTo: 'ubercare@uber-india.com',
-    body: lines.join('\n'),
     htmlBody: htmlBody
   });
 }
