@@ -207,14 +207,14 @@ appointmentForm?.addEventListener('submit', async (event) => {
       if (result.fields) {
         Object.entries(result.fields).forEach(([name, message]) => setAppointmentError(name, message));
       }
-      throw new Error(result.error || 'submission-failed');
+      throw new Error(result.details || result.error || 'submission-failed');
     }
     window.sessionStorage.setItem('appointmentSubmitted', 'true');
     window.location.assign('../thank-you/');
   } catch (error) {
     console.error('Appointment Submission Error:', error);
     if (status) {
-      status.textContent = 'We could not submit your request right now. Please try again.';
+      status.textContent = `Submission failed: ${error.message}. Please check console or Vercel logs.`;
       status.classList.add('error');
     }
     if (submitButton) {

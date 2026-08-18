@@ -104,7 +104,8 @@ module.exports = async function appointmentHandler(req, res) {
     const response = await fetch(scriptUrl, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ ...data, secret: sharedSecret })
+      body: JSON.stringify({ ...data, secret: sharedSecret }),
+      redirect: 'follow'
     });
     
     let result = {};
@@ -123,7 +124,7 @@ module.exports = async function appointmentHandler(req, res) {
         fields: result.fields ? Object.keys(result.fields) : [],
         rawText: rawText.slice(0, 500)
       });
-      return json(res, 502, { ok: false, error: 'submission-service-failed' });
+      return json(res, 502, { ok: false, error: 'submission-service-failed', details: result.error || rawText.slice(0, 100) });
     }
 
     return json(res, 200, { ok: true });
