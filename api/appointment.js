@@ -106,13 +106,22 @@ module.exports = async function appointmentHandler(req, res) {
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ ...data, secret: sharedSecret })
     });
-    const result = await response.json().catch(() => ({}));
+    
+    let result = {};
+    let rawText = '';
+    try {
+      rawText = await response.text();
+      result = JSON.parse(rawText);
+    } catch (e) {
+      console.error('Failed to parse Apps Script response as JSON. Raw response:', rawText.slice(0, 500));
+    }
 
     if (!response.ok || !result.ok) {
       console.error('Appointment Apps Script rejected submission', {
         status: response.status,
         error: result.error || 'unknown-error',
-        fields: result.fields ? Object.keys(result.fields) : []
+        fields: result.fields ? Object.keys(result.fields) : [],
+        rawText: rawText.slice(0, 500)
       });
       return json(res, 502, { ok: false, error: 'submission-service-failed' });
     }

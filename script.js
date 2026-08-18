@@ -212,6 +212,7 @@ appointmentForm?.addEventListener('submit', async (event) => {
     window.sessionStorage.setItem('appointmentSubmitted', 'true');
     window.location.assign('../thank-you/');
   } catch (error) {
+    console.error('Appointment Submission Error:', error);
     if (status) {
       status.textContent = 'We could not submit your request right now. Please try again.';
       status.classList.add('error');
