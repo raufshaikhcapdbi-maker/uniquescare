@@ -11,7 +11,8 @@ var HEADERS = [
   'Prescription File Type',
   'Prescription File Size',
   'Prescription File URL',
-  'Submission ID'
+  'Submission ID',
+  'Email Status'
 ];
 
 function doGet() {
@@ -46,13 +47,15 @@ function doPost(event) {
 
       var timestamp = new Date();
       var prescription = savePrescription(data.prescription);
-      appendSubmission(timestamp, data, prescription);
       
+      var emailStatus = 'Sent Successfully';
       try {
         sendAppointmentEmail(timestamp, data, prescription);
       } catch (emailError) {
-        console.error('Email failed to send:', emailError);
+        emailStatus = 'Error: ' + String(emailError);
       }
+
+      appendSubmission(timestamp, data, prescription, emailStatus);
 
       if (cacheKey) cache.put(cacheKey, '1', 21600);
       return respond({ ok: true });
@@ -101,7 +104,7 @@ function validatePayload(payload) {
   return { ok: Object.keys(errors).length === 0, errors: errors, data: data };
 }
 
-function appendSubmission(timestamp, data, prescription) {
+function appendSubmission(timestamp, data, prescription, emailStatus) {
   var sheet = getAppointmentSheet();
   ensureHeaders(sheet);
   sheet.appendRow([
@@ -113,7 +116,8 @@ function appendSubmission(timestamp, data, prescription) {
     prescription.type || '',
     prescription.size || '',
     prescription.url || '',
-    data.submissionId || ''
+    data.submissionId || '',
+    emailStatus || ''
   ]);
 }
 
@@ -135,7 +139,12 @@ function getAppointmentSheet() {
 function ensureHeaders(sheet) {
   var existing = sheet.getRange(1, 1, 1, HEADERS.length).getValues()[0];
   var needsHeaders = existing.every(function(value) { return !value; });
-  if (needsHeaders) sheet.getRange(1, 1, 1, HEADERS.length).setValues([HEADERS]);
+  if (needsHeaders) {
+    sheet.getRange(1, 1, 1, HEADERS.length).setValues([HEADERS]);
+    sheet.getRange(1, 1, 1, HEADERS.length).setFontWeight('bold');
+  } else if (existing.length < HEADERS.length) {
+    sheet.getRange(1, HEADERS.length).setValue('Email Status').setFontWeight('bold');
+  }
 }
 
 function savePrescription(file) {
@@ -175,20 +184,25 @@ function sendAppointmentEmail(timestamp, data, prescription) {
   ];
 
   var htmlBody = [
-    '<h2>New Appointment Request - Unique WellCare</h2>',
-    '<h3>Patient Details</h3>',
+    '<div style="font-family: sans-serif; max-width: 600px; margin: 0 auto; padding: 20px; border: 1px solid #ddd; border-radius: 8px;">',
+    '<h2 style="color: #0b5b9e;">New Appointment Request</h2>',
+    '<h3 style="color: #333; border-bottom: 1px solid #eee; padding-bottom: 8px;">Patient Details</h3>',
     '<p><strong>Name:</strong><br>' + escapeHtml(data.patientName) + '</p>',
     '<p><strong>Mobile Number:</strong><br>' + escapeHtml(data.patientMobile) + '</p>',
     '<p><strong>Location:</strong><br>' + escapeHtml(data.location) + '</p>',
-    '<p><strong>Doctor Prescription:</strong><br>' + escapeHtml(prescription.name || 'Not uploaded') + '</p>',
-    '<p><strong>Prescription Link:</strong><br>' + (prescription.url ? '<a href="' + escapeHtml(prescription.url) + '">' + escapeHtml(prescription.url) + '</a>' : 'Not available') + '</p>',
-    '<p><strong>Submission Date:</strong><br>' + escapeHtml(dateText) + '</p>',
-    '<p><strong>Submission Time:</strong><br>' + escapeHtml(timeText) + '</p>'
+    '<h3 style="color: #333; border-bottom: 1px solid #eee; padding-bottom: 8px; margin-top: 24px;">Prescription</h3>',
+    '<p><strong>File Name:</strong><br>' + escapeHtml(prescription.name || 'Not uploaded') + '</p>',
+    '<p><strong>Link:</strong><br>' + (prescription.url ? '<a href="' + escapeHtml(prescription.url) + '" style="color: #0b5b9e; text-decoration: none;">View Prescription Document &rarr;</a>' : 'Not available') + '</p>',
+    '<hr style="border: none; border-top: 1px solid #eee; margin: 24px 0;">',
+    '<p style="font-size: 12px; color: #777;">Submitted on ' + escapeHtml(dateText) + ' at ' + escapeHtml(timeText) + ' via the Unique WellCare website.</p>',
+    '</div>'
   ].join('');
 
   MailApp.sendEmail({
     to: CLIENT_EMAIL,
     subject: subject,
+    name: 'Unique WellCare System',
+    replyTo: 'ubercare@uber-india.com',
     body: lines.join('\n'),
     htmlBody: htmlBody
   });
