@@ -122,7 +122,9 @@ html{-webkit-text-size-adjust:100%;text-size-adjust:100%}
 }
 @media (max-width: 700px) {
   .hero-pricing-slider { margin: 0 auto 30px; max-width: 100%; }
-  .slide-msg { font-size: 13px; justify-content: center; }
+  .slide-msg { font-size: 12px; justify-content: center; padding: 0 8px; }
+  .slide-msg .divider { margin: 0 6px; }
+  .hide-mobile { display: none !important; }
   .day-night-grid { grid-template-columns: 1fr; }
   .day-night-highlight { padding-bottom: 64px; }
   .dn-card { padding: 24px; gap: 18px; }
