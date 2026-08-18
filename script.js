@@ -81,15 +81,146 @@ prescriptionFile?.addEventListener('change', () => {
   if (fileName) fileName.textContent = prescriptionFile.files[0]?.name || 'No file selected';
 });
 
-appointmentForm?.addEventListener('submit', () => {
+const appointmentError = (name) => appointmentForm?.querySelector(`[data-error-for="${name}"]`);
+const setAppointmentError = (name, message) => {
+  const error = appointmentError(name);
+  const field = appointmentForm?.elements[name];
+  if (error) error.textContent = message;
+  if (field && 'setCustomValidity' in field) field.setCustomValidity(message);
+};
+const clearAppointmentErrors = () => {
+  appointmentForm?.querySelectorAll('.field-error').forEach((error) => { error.textContent = ''; });
+  if (!appointmentForm) return;
+  [...appointmentForm.elements].forEach((field) => {
+    if ('setCustomValidity' in field) field.setCustomValidity('');
+  });
+};
+const getAppointmentFilePayload = (file) => new Promise((resolve, reject) => {
+  if (!file) {
+    resolve(null);
+    return;
+  }
+  const reader = new FileReader();
+  reader.addEventListener('load', () => {
+    const result = String(reader.result || '');
+    resolve({
+      name: file.name,
+      type: file.type || 'application/octet-stream',
+      size: file.size,
+      content: result.includes(',') ? result.split(',').pop() : ''
+    });
+  });
+  reader.addEventListener('error', () => reject(new Error('file-read-failed')));
+  reader.readAsDataURL(file);
+});
+const validateAppointmentForm = () => {
+  if (!appointmentForm) return false;
+  clearAppointmentErrors();
+  const data = new FormData(appointmentForm);
+  let isValid = true;
+  const patientName = String(data.get('patientName') || '').trim();
+  const patientMobile = String(data.get('patientMobile') || '').trim();
+  const location = String(data.get('location') || '').trim();
+  const file = prescriptionFile?.files[0];
+
+  if (!patientName) {
+    setAppointmentError('patientName', 'Please enter the patient name.');
+    isValid = false;
+  }
+  if (!/^[6-9]\d{9}$/.test(patientMobile)) {
+    setAppointmentError('patientMobile', 'Enter a valid 10-digit Indian mobile number.');
+    isValid = false;
+  }
+  if (!location) {
+    setAppointmentError('location', 'Please select a location.');
+    isValid = false;
+  }
+  if (file) {
+    const allowedTypes = ['application/pdf'];
+    const isAllowedImage = file.type.startsWith('image/');
+    const isAllowedFile = isAllowedImage || allowedTypes.includes(file.type);
+    if (!isAllowedFile) {
+      setAppointmentError('prescription', 'Upload an image or PDF prescription.');
+      isValid = false;
+    } else if (file.size > 3 * 1024 * 1024) {
+      setAppointmentError('prescription', 'Prescription file must be 3 MB or smaller.');
+      isValid = false;
+    }
+  }
+  return isValid;
+};
+
+document.body.dataset.page === 'thank-you' && (() => {
+  if (window.sessionStorage.getItem('appointmentSubmitted') !== 'true') {
+    window.location.replace('../book-an-appointment/');
+  } else {
+    window.sessionStorage.removeItem('appointmentSubmitted');
+  }
+})();
+
+appointmentForm?.querySelector('[name="patientMobile"]')?.addEventListener('input', (event) => {
+  event.target.value = event.target.value.replace(/\D/g, '').slice(0, 10);
+  setAppointmentError('patientMobile', '');
+});
+
+appointmentForm?.addEventListener('submit', async (event) => {
+  event.preventDefault();
   const status = appointmentForm.querySelector('.appointment-status');
-  if (status) status.textContent = 'Sending your appointment request…';
-  window.setTimeout(() => {
-    if (status) status.textContent = 'Your appointment request has been submitted.';
-    appointmentForm.reset();
-    const fileName = document.querySelector('.file-name');
-    if (fileName) fileName.textContent = 'No file selected';
-  }, 1800);
+  const submitButton = appointmentForm.querySelector('.appointment-submit');
+  if (submitButton?.disabled) return;
+  if (!validateAppointmentForm()) {
+    if (status) {
+      status.textContent = 'Please fix the highlighted fields before submitting.';
+      status.classList.add('error');
+    }
+    return;
+  }
+
+  const formData = new FormData(appointmentForm);
+  const file = prescriptionFile?.files[0];
+  const originalButtonText = submitButton?.textContent || 'Submit appointment request';
+  if (submitButton) {
+    submitButton.disabled = true;
+    submitButton.textContent = 'Submitting...';
+  }
+  if (status) {
+    status.textContent = 'Submitting your appointment request...';
+    status.classList.remove('error');
+  }
+
+  try {
+    const prescription = await getAppointmentFilePayload(file);
+    const response = await fetch(appointmentForm.action, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        patientName: String(formData.get('patientName') || '').trim(),
+        patientMobile: String(formData.get('patientMobile') || '').trim(),
+        location: String(formData.get('location') || '').trim(),
+        website: String(formData.get('website') || ''),
+        prescription,
+        submissionId: `${Date.now()}-${Math.random().toString(36).slice(2)}`
+      })
+    });
+    const result = await response.json().catch(() => ({}));
+    if (!response.ok || !result.ok) {
+      if (result.fields) {
+        Object.entries(result.fields).forEach(([name, message]) => setAppointmentError(name, message));
+      }
+      throw new Error(result.error || 'submission-failed');
+    }
+    window.sessionStorage.setItem('appointmentSubmitted', 'true');
+    window.location.assign('../thank-you/');
+  } catch (error) {
+    if (status) {
+      status.textContent = 'We could not submit your request right now. Please try again.';
+      status.classList.add('error');
+    }
+    if (submitButton) {
+      submitButton.disabled = false;
+      submitButton.textContent = originalButtonText;
+    }
+  }
 });
 
 const year = document.getElementById('year');
