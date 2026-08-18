@@ -14,6 +14,10 @@ var HEADERS = [
   'Submission ID'
 ];
 
+function doGet() {
+  return respond({ ok: true, service: 'unique-wellcare-appointment-handler' });
+}
+
 function doPost(event) {
   try {
     var payload = JSON.parse((event.postData && event.postData.contents) || '{}');
@@ -21,12 +25,12 @@ function doPost(event) {
     var expectedSecret = scriptProperties.getProperty('UNIQUE_WELLCARE_SHARED_SECRET');
 
     if (!expectedSecret || payload.secret !== expectedSecret) {
-      return respond(403, { ok: false, error: 'forbidden' });
+      return respond({ ok: false, error: 'forbidden' });
     }
 
     var validation = validatePayload(payload);
     if (!validation.ok) {
-      return respond(400, { ok: false, error: 'invalid-form-data', fields: validation.errors });
+      return respond({ ok: false, error: 'invalid-form-data', fields: validation.errors });
     }
 
     var data = validation.data;
@@ -37,7 +41,7 @@ function doPost(event) {
       var cache = CacheService.getScriptCache();
       var cacheKey = data.submissionId ? 'appointment:' + data.submissionId : '';
       if (cacheKey && cache.get(cacheKey)) {
-        return respond(200, { ok: true, duplicate: true });
+        return respond({ ok: true, duplicate: true });
       }
 
       var timestamp = new Date();
@@ -46,12 +50,12 @@ function doPost(event) {
       sendAppointmentEmail(timestamp, data, prescription);
 
       if (cacheKey) cache.put(cacheKey, '1', 21600);
-      return respond(200, { ok: true });
+      return respond({ ok: true });
     } finally {
       lock.releaseLock();
     }
   } catch (error) {
-    return respond(500, { ok: false, error: 'server-error' });
+    return respond({ ok: false, error: 'server-error' });
   }
 }
 
@@ -198,7 +202,7 @@ function escapeHtml(value) {
     .replace(/'/g, '&#39;');
 }
 
-function respond(statusCode, payload) {
+function respond(payload) {
   return ContentService
     .createTextOutput(JSON.stringify(payload))
     .setMimeType(ContentService.MimeType.JSON);

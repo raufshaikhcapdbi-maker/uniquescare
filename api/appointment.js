@@ -109,11 +109,19 @@ module.exports = async function appointmentHandler(req, res) {
     const result = await response.json().catch(() => ({}));
 
     if (!response.ok || !result.ok) {
+      console.error('Appointment Apps Script rejected submission', {
+        status: response.status,
+        error: result.error || 'unknown-error',
+        fields: result.fields ? Object.keys(result.fields) : []
+      });
       return json(res, 502, { ok: false, error: 'submission-service-failed' });
     }
 
     return json(res, 200, { ok: true });
   } catch (error) {
+    console.error('Appointment Apps Script request failed', {
+      message: error && error.message ? error.message : 'unknown-error'
+    });
     return json(res, 502, { ok: false, error: 'submission-service-unavailable' });
   }
 };
