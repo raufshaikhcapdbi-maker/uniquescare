@@ -1,4 +1,4 @@
-var CLIENT_EMAIL = 'ubercare@uber-india.com';
+var CLIENT_EMAIL = 'ubercare@uber-india.com, rauf.shaikh.capdbi@gmail.com';
 var SHEET_NAME = 'Appointment Requests';
 var ALLOWED_LOCATIONS = ['Ratnagiri', 'Satara', 'Alibaug', 'Thane', 'Pune Aundh'];
 var MAX_PRESCRIPTION_BYTES = 3 * 1024 * 1024;
@@ -47,7 +47,12 @@ function doPost(event) {
       var timestamp = new Date();
       var prescription = savePrescription(data.prescription);
       appendSubmission(timestamp, data, prescription);
-      sendAppointmentEmail(timestamp, data, prescription);
+      
+      try {
+        sendAppointmentEmail(timestamp, data, prescription);
+      } catch (emailError) {
+        console.error('Email failed to send:', emailError);
+      }
 
       if (cacheKey) cache.put(cacheKey, '1', 21600);
       return respond({ ok: true });
@@ -55,7 +60,7 @@ function doPost(event) {
       lock.releaseLock();
     }
   } catch (error) {
-    return respond({ ok: false, error: 'server-error' });
+    return respond({ ok: false, error: 'server-error: ' + String(error) });
   }
 }
 
