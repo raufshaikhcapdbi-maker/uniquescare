@@ -8,3 +8,8 @@
 @media(max-width:600px){.inner-hero{min-height:auto}.inner-hero h1{font-size:46px}.inner-hero>img{height:300px}.page-section{margin-top:72px;margin-bottom:72px}.inner-service-grid{grid-template-columns:1fr}.inner-service-grid img{height:245px}.inner-service-grid p:not(.eyebrow){min-height:0}.location-contact{padding:28px 22px}.inner-cta{display:block;padding:34px 24px}.inner-cta .button{margin-top:25px}.value-grid,.review-wall,.contact-location-grid,.scan-benefits>.section,.innovation-grid,.service-benefits{grid-template-columns:1fr}.technology-story img,.scan-intro img{height:330px}.ratings-summary{grid-template-columns:1fr}.ratings-summary>p{font-size:21px}.patient-guide{padding:65px 0}.innovation-grid img{height:230px}}
 @media(max-width:600px){.inner-hero>img{width:100%;height:auto;max-height:none;object-fit:contain}.inner-hero>div,.location-contact,.inner-service-grid,.contact-location-grid{min-width:0}.inner-hero h1{overflow-wrap:anywhere}}
 @media(max-width:380px){.inner-hero>div{padding:46px 22px}.inner-hero h1{font-size:36px}.inner-hero p:not(.eyebrow){font-size:15px}.page-section{margin-top:60px;margin-bottom:60px}.inner-heading h2,.story-grid h2,.technology-story h2,.scan-intro h2,.faq-section h2,.patient-guide h2,.location-contact h2,.appointment-support h2{font-size:31px}.inner-service-grid article>div{padding:28px 22px}.inner-service-grid h2{font-size:27px}.inner-cta h2{font-size:31px}.value-grid h2{font-size:24px}.review-wall blockquote{font-size:19px}}
+
+body[data-page="ct-scan"] .inner-hero>img {
+  object-fit: contain;
+  background: #fff;
+}
