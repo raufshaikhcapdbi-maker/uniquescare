@@ -343,3 +343,30 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   });
 });
+
+// Locations Carousel Slider Logic
+document.addEventListener('DOMContentLoaded', () => {
+  document.querySelectorAll('[data-location-carousel]').forEach((carousel) => {
+    const track = carousel.querySelector('.location-track');
+    const cards = [...carousel.querySelectorAll('.location-card')];
+    const previous = carousel.querySelector('.review-prev');
+    const next = carousel.querySelector('.review-next');
+    let index = 0;
+    
+    const visibleCards = () => window.innerWidth <= 700 ? 1 : 3;
+    
+    const move = (nextIndex) => {
+      if (!cards.length) return;
+      const maximum = Math.max(0, cards.length - visibleCards());
+      index = nextIndex > maximum ? 0 : nextIndex < 0 ? maximum : nextIndex;
+      const cardWidth = cards[0].getBoundingClientRect().width;
+      track.style.transform = `translateX(-${index * (cardWidth + 24)}px)`;
+    };
+    
+    previous?.addEventListener('click', () => move(index - 1));
+    next?.addEventListener('click', () => move(index + 1));
+    window.addEventListener('resize', () => move(index));
+    
+    move(0);
+  });
+});
