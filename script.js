@@ -52,10 +52,11 @@ function makeInfiniteCarousel(carouselEl, trackEl, originalCards, prevBtn, nextB
   const numOriginals = originalCards.length;
   const numClones = 3;
   const prependedClones = originalCards.slice(-numClones).map(el => el.cloneNode(true));
+  const middleCards = originalCards.map(el => el.cloneNode(true));
   const appendedClones = originalCards.slice(0, numClones).map(el => el.cloneNode(true));
   trackEl.innerHTML = '';
   prependedClones.forEach(el => { el.classList.add('is-clone'); trackEl.appendChild(el); });
-  originalCards.forEach(el => trackEl.appendChild(el));
+  middleCards.forEach(el => trackEl.appendChild(el));
   appendedClones.forEach(el => { el.classList.add('is-clone'); trackEl.appendChild(el); });
   let activeIndex = numClones;
   let isTransitioning = false;
@@ -399,4 +400,26 @@ document.querySelectorAll('[data-location-carousel]').forEach((carousel) => {
   const previous = carousel.querySelector('.review-prev');
   const next = carousel.querySelector('.review-next');
   makeInfiniteCarousel(carousel, track, cards, previous, next, 24, 0);
+  
+  // Temp Debug Banner to show children in the DOM
+  const dbg = document.createElement('div');
+  dbg.style.position = 'fixed';
+  dbg.style.top = '10px';
+  dbg.style.left = '10px';
+  dbg.style.background = 'rgba(0,0,0,0.85)';
+  dbg.style.color = '#fff';
+  dbg.style.padding = '12px';
+  dbg.style.zIndex = '999999';
+  dbg.style.fontSize = '12px';
+  dbg.style.fontFamily = 'monospace';
+  dbg.style.borderRadius = '5px';
+  dbg.style.lineHeight = '1.4';
+  
+  const updateDbg = () => {
+    const children = [...track.children];
+    const info = children.map((c, idx) => `${idx}:${c.querySelector('span')?.textContent || 'NoText'}`).join(', ');
+    dbg.innerHTML = `Track Children (${children.length}):<br>${info}`;
+  };
+  setTimeout(updateDbg, 200);
+  document.body.appendChild(dbg);
 });
