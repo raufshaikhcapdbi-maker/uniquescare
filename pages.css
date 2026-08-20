@@ -11,5 +11,4 @@
 
 body[data-page="ct-scan"] .inner-hero>img {
   object-fit: contain;
-  background: #fff;
 }
