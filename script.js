@@ -46,32 +46,80 @@ document.querySelectorAll('[data-carousel]').forEach((carousel) => {
   if (slides.length) show(0);
 });
 
+// Carousel helper for infinite scrolling
+function makeInfiniteCarousel(carouselEl, trackEl, originalCards, prevBtn, nextBtn, gap, autoplayInterval = 0) {
+  if (!originalCards.length) return;
+  const numOriginals = originalCards.length;
+  const numClones = 3;
+  const prependedClones = originalCards.slice(-numClones).map(el => el.cloneNode(true));
+  const appendedClones = originalCards.slice(0, numClones).map(el => el.cloneNode(true));
+  trackEl.innerHTML = '';
+  prependedClones.forEach(el => { el.classList.add('is-clone'); trackEl.appendChild(el); });
+  originalCards.forEach(el => trackEl.appendChild(el));
+  appendedClones.forEach(el => { el.classList.add('is-clone'); trackEl.appendChild(el); });
+  let activeIndex = numClones;
+  let isTransitioning = false;
+  const getCardWidth = () => {
+    const cards = [...trackEl.children];
+    return cards[0].getBoundingClientRect().width;
+  };
+  const updatePosition = (smooth = true) => {
+    if (smooth) {
+      trackEl.style.transition = 'transform 0.45s cubic-bezier(0.25, 0.46, 0.45, 0.94)';
+    } else {
+      trackEl.style.transition = 'none';
+    }
+    const cardWidth = getCardWidth();
+    trackEl.style.transform = `translateX(-${activeIndex * (cardWidth + gap)}px)`;
+  };
+  const moveNext = () => {
+    if (isTransitioning) return;
+    isTransitioning = true;
+    activeIndex++;
+    updatePosition(true);
+  };
+  const movePrev = () => {
+    if (isTransitioning) return;
+    isTransitioning = true;
+    activeIndex--;
+    updatePosition(true);
+  };
+  trackEl.addEventListener('transitionend', () => {
+    isTransitioning = false;
+    if (activeIndex >= numClones + numOriginals) {
+      activeIndex = numClones;
+      updatePosition(false);
+    } else if (activeIndex < numClones) {
+      activeIndex = numClones + numOriginals - 1;
+      updatePosition(false);
+    }
+  });
+  nextBtn?.addEventListener('click', () => { moveNext(); resetAutoplay(); });
+  prevBtn?.addEventListener('click', () => { movePrev(); resetAutoplay(); });
+  window.addEventListener('resize', () => { updatePosition(false); });
+  let timer;
+  const startAutoplay = () => {
+    if (autoplayInterval > 0) {
+      clearInterval(timer);
+      timer = setInterval(moveNext, autoplayInterval);
+    }
+  };
+  const stopAutoplay = () => { clearInterval(timer); };
+  const resetAutoplay = () => { stopAutoplay(); startAutoplay(); };
+  if (autoplayInterval > 0) {
+    carouselEl.addEventListener('mouseenter', stopAutoplay);
+    carouselEl.addEventListener('mouseleave', startAutoplay);
+    startAutoplay();
+  }
+  setTimeout(() => { updatePosition(false); }, 50);
+}
+
 document.querySelectorAll('[data-review-carousel]').forEach((carousel) => {
   const track = carousel.querySelector('.review-track');
   const cards = [...carousel.querySelectorAll('.review-card')];
   const previous = carousel.querySelector('.review-prev');
   const next = carousel.querySelector('.review-next');
-  let index = 0;
-  let timer;
-  const visibleCards = () => window.innerWidth <= 700 ? 1 : 3;
-  const move = (nextIndex) => {
-    if (!cards.length) return;
-    const maximum = Math.max(0, cards.length - visibleCards());
-    index = nextIndex > maximum ? 0 : nextIndex < 0 ? maximum : nextIndex;
-    const cardWidth = cards[0].getBoundingClientRect().width;
-    track.style.transform = `translateX(-${index * (cardWidth + 22)}px)`;
-  };
-  const autoplay = () => {
-    window.clearInterval(timer);
-    timer = window.setInterval(() => move(index + 1), 6500);
-  };
-  previous?.addEventListener('click', () => { move(index - 1); autoplay(); });
-  next?.addEventListener('click', () => { move(index + 1); autoplay(); });
-  window.addEventListener('resize', () => move(index));
-  carousel.addEventListener('mouseenter', () => window.clearInterval(timer));
-  carousel.addEventListener('mouseleave', autoplay);
-  move(0);
-  autoplay();
+  makeInfiniteCarousel(carousel, track, cards, previous, next, 22, 6500);
 });
 
 const appointmentForm = document.querySelector('.appointment-form');
@@ -345,28 +393,10 @@ document.addEventListener('DOMContentLoaded', () => {
 });
 
 // Locations Carousel Slider Logic
-document.addEventListener('DOMContentLoaded', () => {
-  document.querySelectorAll('[data-location-carousel]').forEach((carousel) => {
-    const track = carousel.querySelector('.location-track');
-    const cards = [...carousel.querySelectorAll('.location-card')];
-    const previous = carousel.querySelector('.review-prev');
-    const next = carousel.querySelector('.review-next');
-    let index = 0;
-    
-    const visibleCards = () => window.innerWidth <= 700 ? 1 : 3;
-    
-    const move = (nextIndex) => {
-      if (!cards.length) return;
-      const maximum = Math.max(0, cards.length - visibleCards());
-      index = nextIndex > maximum ? 0 : nextIndex < 0 ? maximum : nextIndex;
-      const cardWidth = cards[0].getBoundingClientRect().width;
-      track.style.transform = `translateX(-${index * (cardWidth + 24)}px)`;
-    };
-    
-    previous?.addEventListener('click', () => move(index - 1));
-    next?.addEventListener('click', () => move(index + 1));
-    window.addEventListener('resize', () => move(index));
-    
-    move(0);
-  });
+document.querySelectorAll('[data-location-carousel]').forEach((carousel) => {
+  const track = carousel.querySelector('.location-track');
+  const cards = [...carousel.querySelectorAll('.location-card')];
+  const previous = carousel.querySelector('.review-prev');
+  const next = carousel.querySelector('.review-next');
+  makeInfiniteCarousel(carousel, track, cards, previous, next, 24, 0);
 });
