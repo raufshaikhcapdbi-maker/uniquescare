@@ -55,9 +55,9 @@ function makeInfiniteCarousel(carouselEl, trackEl, originalCards, prevBtn, nextB
   const middleCards = originalCards.map(el => el.cloneNode(true));
   const appendedClones = originalCards.slice(0, numClones).map(el => el.cloneNode(true));
   trackEl.innerHTML = '';
-  prependedClones.forEach(el => { el.classList.add('is-clone'); trackEl.appendChild(el); });
-  middleCards.forEach(el => trackEl.appendChild(el));
-  appendedClones.forEach(el => { el.classList.add('is-clone'); trackEl.appendChild(el); });
+  prependedClones.forEach(el => { el.classList.remove('reveal'); el.classList.add('revealed'); el.classList.add('is-clone'); trackEl.appendChild(el); });
+  middleCards.forEach(el => { el.classList.remove('reveal'); el.classList.add('revealed'); trackEl.appendChild(el); });
+  appendedClones.forEach(el => { el.classList.remove('reveal'); el.classList.add('revealed'); el.classList.add('is-clone'); trackEl.appendChild(el); });
   let activeIndex = numClones;
   let isTransitioning = false;
   const getCardWidth = () => {
@@ -276,7 +276,7 @@ appointmentForm?.addEventListener('submit', async (event) => {
 const year = document.getElementById('year');
 if (year) year.textContent = new Date().getFullYear();
 
-const motionTargets = document.querySelectorAll('.section-heading,.service-feature,.trust-section,.location-card,.journey-steps,.final-cta,.page-section');
+const motionTargets = document.querySelectorAll('.section-heading,.service-feature,.trust-section,.location-carousel,.journey-steps,.final-cta,.page-section');
 if ('IntersectionObserver' in window && !window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
   const observer = new IntersectionObserver((entries) => {
     entries.forEach((entry) => {
