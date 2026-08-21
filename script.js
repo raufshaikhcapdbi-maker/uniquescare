@@ -293,18 +293,6 @@ document.addEventListener('DOMContentLoaded', () => {
   const popupHtml = `
     <div class="wa-popup-overlay" id="waPopup">
       <div class="wa-popup-list">
-        <a class="wa-popup-card" href="https://wa.me/919604054834" target="_blank" rel="noopener">
-          <h3>Ratnagiri</h3>
-          <span>+91 96040 54834</span>
-        </a>
-        <a class="wa-popup-card" href="https://wa.me/917715908507" target="_blank" rel="noopener">
-          <h3>Satara</h3>
-          <span>+91 77159 08507</span>
-        </a>
-        <a class="wa-popup-card" href="https://wa.me/917276015041" target="_blank" rel="noopener">
-          <h3>Alibaug</h3>
-          <span>+91 72760 15041</span>
-        </a>
         <a class="wa-popup-card" href="https://wa.me/917276015041" target="_blank" rel="noopener">
           <h3>Thane</h3>
           <span>+91 72760 15041</span>
@@ -312,6 +300,18 @@ document.addEventListener('DOMContentLoaded', () => {
         <a class="wa-popup-card" href="https://wa.me/919702263697" target="_blank" rel="noopener">
           <h3>Pune Aundh</h3>
           <span>+91 97022 63697</span>
+        </a>
+        <a class="wa-popup-card" href="https://wa.me/917715908507" target="_blank" rel="noopener">
+          <h3>Satara</h3>
+          <span>+91 77159 08507</span>
+        </a>
+        <a class="wa-popup-card" href="https://wa.me/919604054834" target="_blank" rel="noopener">
+          <h3>Ratnagiri</h3>
+          <span>+91 96040 54834</span>
+        </a>
+        <a class="wa-popup-card" href="https://wa.me/917276015041" target="_blank" rel="noopener">
+          <h3>Alibaug</h3>
+          <span>+91 72760 15041</span>
         </a>
       </div>
     </div>
