@@ -3,8 +3,8 @@ const A = '../assets/';
 
 const locations = {
   thane:{name:'Thane',address:'Near Utsal Road, Opposite Police Quarter, Tembhi Naka, Thane (W), Maharashtra 400601',phones:['+91 72760 15041'],image:'thane-landmark.jpg'},
-  'pune-aundh':{name:'Pune Aundh',address:'Aundh Hospital Campus, Between Sanghvi Phata and Rakshak Chowk, Pune 411027',phones:['+91 97022 63697','+91 98506 44544'],image:'pune-landmark.jpg'},
-  satara:{name:'Satara',address:'Sadarbazar, Guruwar Peth, Satara, Maharashtra 415002',phones:['+91 77159 08507','+91 99706 08139'],image:'satara-landmark.jpg'},
+  'pune-aundh':{name:'Pune Aundh',address:'Aundh Hospital Campus, Between Sanghvi Phata and Rakshak Chowk, Pune 411027',phones:['+91 91682 98383'],image:'pune-landmark.jpg'},
+  satara:{name:'Satara',address:'Sadarbazar, Guruwar Peth, Satara, Maharashtra 415002',phones:['+91 83085 15000'],image:'satara-landmark.jpg'},
   ratnagiri:{name:'Ratnagiri',address:'Behind Civil Hospital, Rajiwada, Ratnagiri, Maharashtra 415612',phones:['+91 96040 54834'],image:'ratnagiri-landmark.jpg'},
   alibaug:{name:'Alibaug',address:'Civil Hospital, Alibag Beach Road, Limaye Wadi, Alibag, Maharashtra 402201',phones:['+91 72760 15041'],image:'alibaug-landmark.jpg'}
 };

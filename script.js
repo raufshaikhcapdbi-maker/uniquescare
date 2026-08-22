@@ -297,13 +297,13 @@ document.addEventListener('DOMContentLoaded', () => {
           <h3>Thane</h3>
           <span>+91 72760 15041</span>
         </a>
-        <a class="wa-popup-card" href="https://wa.me/919702263697" target="_blank" rel="noopener">
+        <a class="wa-popup-card" href="https://wa.me/919168298383" target="_blank" rel="noopener">
           <h3>Pune Aundh</h3>
-          <span>+91 97022 63697</span>
+          <span>+91 91682 98383</span>
         </a>
-        <a class="wa-popup-card" href="https://wa.me/917715908507" target="_blank" rel="noopener">
+        <a class="wa-popup-card" href="https://wa.me/918308515000" target="_blank" rel="noopener">
           <h3>Satara</h3>
-          <span>+91 77159 08507</span>
+          <span>+91 83085 15000</span>
         </a>
         <a class="wa-popup-card" href="https://wa.me/919604054834" target="_blank" rel="noopener">
           <h3>Ratnagiri</h3>
